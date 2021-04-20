@@ -4,12 +4,21 @@ from urllib.parse import urlsplit
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        message = "Got request"
+        self.send_response(200)
+        if self.path == '/agent':
+            message = self.headers['user-agent']
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(bytes(message, "utf8"))        
+
         result=urlparse(self.requestline)
         num=result[4].split()[0]
         num=num.split('=')
         res=MyHandler.lucky(int(num[1]))
         with open('lucky.csv', 'a') as f:
             if f: s=f.write(num[1]+","+res+"\n")
+            print(s)
         return
 
     @staticmethod        
